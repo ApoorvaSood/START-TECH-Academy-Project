@@ -3,7 +3,7 @@
 
 - 🌱 I’m currently learning **Data Science**
 
-- 📫 How to reach me **apoorvasood96@gmail.com**
+- 📫 How to reach me **appy638@gmail.com**
 
 - 📄 Know about my experiences [www.linkedin.com/in/apoorva-sood1](www.linkedin.com/in/apoorva-sood1)
 
