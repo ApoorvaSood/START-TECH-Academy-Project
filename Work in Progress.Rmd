@@ -1,0 +1,150 @@
+---
+title: "Problem Statement 3"
+author: "Apoorva Sood - 212410016"
+date: "`r Sys.Date()`"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+**Clearing the environment**
+
+```{r}
+rm(list=ls())
+```
+
+**Libraries Used**
+
+```{r, warning=FALSE}
+library(readxl)
+library(outliers)
+library(Rcmdr)
+library(Metrics)
+library(car)
+
+```
+
+**Importing the file and removing S.No column**
+
+```{r}
+data = read.csv("E:\\MY WORK\\Internship\\STEP i- Data Analytics and Machine Learning\\TASK - II\\Problem Statement 3 (ML)\\Data_file.csv")
+View(data)
+data= data[2:9]
+```
+
+**Getting the summary and structure of the data**
+
+```{r}
+summary(data)
+
+```
+
+*Converting characters in factors*
+
+```{r}
+str(data) #Has 3 variables with character datatype. We need to change them into factor for the analysis
+data$College = as.factor(data$College)
+data$Role = as.factor(data$Role)
+data$City.type = as.factor(data$City.type)
+```
+
+```{r}
+str(data)
+```
+
+**Checking for outlier in the data**
+
+```{r}
+
+hist(data$Previous.CTC)
+
+```
+
+**Normality test for variables**
+
+-   NULL = The variable is normally distributed
+
+-   ALTERNATIVE = The variable is not normally distributed
+
+-   If p value is less than 0.05 (level of significance) then we reject the null hypothesis.
+
+```{r}
+shapiro.test(data$Previous.CTC) #Not normal
+shapiro.test(data$Exp..Months.) #Not normally distributed
+shapiro.test(data$CTC) #Not normally distributed
+shapiro.test(data$Previous.job.changes) #Not Normal
+
+```
+
+**Model Building (Eliminating insignificant varaibles with BIC method)**
+
+```{r}
+attach(data)
+data1 = lm(CTC~., data =data)
+
+check = stepwise(data1, direction= "backward/forward",criterion = "BIC")
+
+#We got 5 significant variables after Backward Elimination Method
+model = lm(CTC~College + Role + City.type+ Previous.CTC +Exp..Months., data= data)
+
+summary(model)
+
+```
+
+**We got residuals for our model and now we need to check their normality.**
+
+```{r}
+pred = predict(model)
+res = residuals(model)
+hist(res)
+```
+
+```{r}
+#which =2 means qq plot #which =1 is the residual plot
+plot(model, which=2, col=c("red")) 
+```
+
+*Checking normality and autocorrelation between the residuals*
+```{r}
+shapiro.test(residuals(model)) #The residuals are not normally distributed.
+
+durbinWatsonTest(model)#There is no autocorrelation amongst the residuals
+```
+
+
+*Predicting the CTC with model build using the train data*
+```{r}
+newdata = read.csv("C:\\No Dropbox\\Internship\\STEP i- Data Analytics and Machine Learning\\TASK - II\\Problem Statement 3 (ML)\\Test_data_file.xlsx - Prediction.csv")
+View(newdata)
+```
+
+*Converting the character variables into factor*
+```{r}
+newdata$College = as.factor(newdata$College)
+newdata$Role = as.factor(newdata$Role)
+newdata$City.type = as.factor(newdata$City.type)
+
+
+```
+
+
+```{r}
+str(newdata)
+newdata$predicted.CTC = predict(model, newdata)
+View(newdata)
+
+
+```
+
+*Calculating the root mean squared error*
+```{r}
+attach(newdata)
+model2 = lm(Actual.CTC~., data=newdata)
+durbinWatsonTest(model2) #residuals are not auto-correlated
+
+
+sqrt(mean(model2$residuals^2))
+  
+```
+
+
