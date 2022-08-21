@@ -60,22 +60,6 @@ hist(data$Previous.CTC)
 
 ```
 
-**Normality test for variables**
-
--   NULL = The variable is normally distributed
-
--   ALTERNATIVE = The variable is not normally distributed
-
--   If p value is less than 0.05 (level of significance) then we reject the null hypothesis.
-
-```{r}
-shapiro.test(data$Previous.CTC) #Not normal
-shapiro.test(data$Exp..Months.) #Not normally distributed
-shapiro.test(data$CTC) #Not normally distributed
-shapiro.test(data$Previous.job.changes) #Not Normal
-
-```
-
 **Model Building (Eliminating insignificant varaibles with BIC method)**
 
 ```{r}
@@ -104,7 +88,16 @@ hist(res)
 plot(model, which=2, col=c("red")) 
 ```
 
-*Checking normality and autocorrelation between the residuals*
+**Checking normality and autocorrelation between the residuals**
+
+**Normality test for variables**
+
+-   NULL = The variable is normally distributed
+
+-   ALTERNATIVE = The variable is not normally distributed
+
+-   If p value is less than 0.05 (level of significance) then we reject the null hypothesis.
+
 ```{r}
 shapiro.test(residuals(model)) #The residuals are not normally distributed.
 
@@ -112,13 +105,13 @@ durbinWatsonTest(model)#There is no autocorrelation amongst the residuals
 ```
 
 
-*Predicting the CTC with model build using the train data*
+**Predicting the CTC with model build using the train data**
 ```{r}
 newdata = read.csv("C:\\No Dropbox\\Internship\\STEP i- Data Analytics and Machine Learning\\TASK - II\\Problem Statement 3 (ML)\\Test_data_file.xlsx - Prediction.csv")
 View(newdata)
 ```
 
-*Converting the character variables into factor*
+**Converting the character variables into factor**
 ```{r}
 newdata$College = as.factor(newdata$College)
 newdata$Role = as.factor(newdata$Role)
@@ -130,17 +123,18 @@ newdata$City.type = as.factor(newdata$City.type)
 
 ```{r}
 str(newdata)
-newdata$predicted.CTC = predict(model, newdata)
+newdata$Predicted.CTC = predict(model, newdata)
 View(newdata)
 
 
 ```
 
-*Calculating the root mean squared error*
+**Calculating the root mean squared error**
 ```{r}
 attach(newdata)
 model2 = lm(Actual.CTC~., data=newdata)
 durbinWatsonTest(model2) #residuals are not auto-correlated
+
 
 
 sqrt(mean(model2$residuals^2))
