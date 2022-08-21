@@ -1,6 +1,6 @@
 ---
 title: "Problem Statement 3"
-author: "Apoorva Sood - 212410016"
+author: "Apoorva Sood"
 date: "`r Sys.Date()`"
 output:
   pdf_document: default
